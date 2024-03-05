@@ -17,8 +17,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { usePathname, useRouter } from 'next/navigation';
 import { ThreadValidation } from '@/lib/validations/thread';
 import { createThread } from '@/lib/actions/thread.actions';
-// import { updateUser } from '@/lib/actions/user.actions';
-// import {UserValidation} from "@/lib/validations/user";
+import { useOrganization } from '@clerk/nextjs';
+import { COLLECTION_FORMATS } from 'svix/dist/openapi/apis/baseapi';
 
 interface Props {
     userId: string;
@@ -27,6 +27,7 @@ interface Props {
 function PostThread({ userId }: Props) {
     const router = useRouter();
     const pathname = usePathname();
+    const { organization } = useOrganization();
 
     const form = useForm<z.infer<typeof ThreadValidation>>({
         resolver: zodResolver(ThreadValidation),
@@ -35,12 +36,13 @@ function PostThread({ userId }: Props) {
             accountId: userId,
         }
     });
+    console.log(organization)
 
     const onSubmit = async (values: z.infer<typeof ThreadValidation>) => {
         await createThread({
             text: values.thread,
             author: userId,
-            communityId: null,
+            communityId: organization ? organization.id : null,
             path: pathname
         });
         router.push('/');

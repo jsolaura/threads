@@ -1,12 +1,13 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
-import User from '../models/user.model';
-import { connectToDB } from '../mongoose';
-import Thread from '../models/thread.model';
-import { getJsPageSizeInKb } from 'next/dist/build/utils';
 import { FilterQuery, SortOrder } from 'mongoose';
-import { TypeOf } from 'zod';
+import { revalidatePath } from 'next/cache';
+
+import Thread from '../models/thread.model';
+import User from '../models/user.model';
+import Community from '../models/community.model';
+
+import { connectToDB } from '../mongoose';
 
 interface UpdateUserParams {
     userId: string;
@@ -53,19 +54,17 @@ export async function updateUser({
     } catch (error: any) {
         throw new Error(`Failed to create/update user: ${error.message}`);
     }
-
 }
 
 export async function fetchUser(userId: string) {
     try {
         connectToDB();
 
-        return await User
-            .findOne({ id: userId })
-            // .populate({
-                // path: 'communities',
-                // model: Communities
-            // })
+        return await User.findOne({ id: userId })
+            .populate({
+                path: 'communities',
+                model: Community
+            })
     } catch (error: any) {
         throw new Error(`Failed to fetch user: ${error.message}`)
     }
@@ -79,15 +78,22 @@ export async function fetchUserPosts(userId: string) {
             .populate({
                 path: 'threads',
                 model: Thread,
-                populate: {
-                    path: 'children',
-                    model: Thread,
-                    populate: {
-                        path: 'author',
-                        model: User,
-                        select: 'name image id'
-                    }
-                }
+                populate: [
+                    {
+                        path: "community",
+                        model: Community,
+                        select: "name id image _id", // Select the "name" and "_id" fields from the "Community" model
+                    },
+                    {
+                        path: "children",
+                        model: Thread,
+                        populate: {
+                            path: "author",
+                            model: User,
+                            select: "name image id", // Select the "name" and "_id" fields from the "User" model
+                        },
+                    },
+                ],
             })
         return threads;
         
@@ -160,7 +166,7 @@ export async function getActivity(userId: string) {
         return replies;
 
     } catch (error: any) {
-        throw new Error(`Failed to fetch user posts: ${error.message}`)
+        throw new Error(`Failed to fetch replies: ${error.message}`)
     }
 }
 

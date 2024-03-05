@@ -1,3 +1,4 @@
+import { formatDateString } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -26,6 +27,7 @@ interface Props {
 }
 
 const ThreadCard = ({ id, currentUserId, parentId, content, author, community, createdAt, comments, isComment }: Props) => {
+    console.log(community)
     return (
         <article className={`flex w-full flex-col rounded-xl ${isComment ? 'px-0 xs:px-7' : 'bg-dark-2 p-7'}`}>
             <div className='flex items-start justify-between'>
@@ -55,13 +57,32 @@ const ThreadCard = ({ id, currentUserId, parentId, content, author, community, c
 
                             {isComment && comments.length > 0 && (
                                 <Link href={`/thread/${id}`}>
-                                    <p className='mt-1 text-subtle-medium text-gray-1'>{comments.length} replies</p>
+                                    <p className='mt-1 text-subtle-medium text-gray-1'>
+                                        {comments.length} repl{comments.length > 1 ? "ies" : "y"}
+                                    </p>
                                 </Link>
                             )}
                         </div>
                     </div>
                 </div>
+
+                {/* delete */}
             </div>
+            {!isComment && community && (
+                <Link href={`/communities/${community.id}`} className='mt-5 flex items-center'>
+                    <p className='text-subtle-medium text-gray-1'>
+                        {formatDateString(createdAt)}
+                        {community && ` - ${community.name} Community`}
+                    </p>
+                    <Image 
+                        src={community.image}
+                        alt={community.name}
+                        width={16}
+                        height={16}
+                        className='ml-1 rounded-full object-cover'
+                    />
+                </Link>
+            )}
         </article>
     )
 }

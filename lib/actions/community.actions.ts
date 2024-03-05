@@ -95,7 +95,8 @@ export async function fetchCommunityPosts(id: string) {
                     },
                     },
                 ],
-            });
+            }
+        );
 
         return communityPosts;
     } catch (error) {
@@ -160,6 +161,7 @@ export async function fetchCommunities({
         throw error;
     }
 }
+
 
 export async function addMemberToCommunity(
     communityId: string,

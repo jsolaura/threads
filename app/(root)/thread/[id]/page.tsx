@@ -17,14 +17,12 @@ const Page = async ({ params }: { params: { id: string } }) => {
 
     const thread = await fetchThreadById(params.id);
     
-    console.log(thread)
     return (
         <section className='relative'>
             <div>
-                <ThreadCard 
-                    key={thread._id}
+                <ThreadCard
                     id={thread._id}
-                    currentUserId={user?.id || ''}
+                    currentUserId={user?.id}
                     parentId={thread.parentId}
                     content={thread.text}
                     author={thread.author}
@@ -36,7 +34,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
             <div className='mt-7'>
                 <Comment 
                     threadId={thread.id}
-                    currentUserImg={userInfo.image}
+                    currentUserImg={user.imageUrl}
                     currentUserId={JSON.stringify(userInfo._id)}
                 />
             </div>
@@ -45,7 +43,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
                     <ThreadCard 
                         key={childItem._id}
                         id={childItem._id}
-                        currentUserId={user?.id || ''}
+                        currentUserId={user.id}
                         parentId={childItem.parentId}
                         content={childItem.text}
                         author={childItem.author}
