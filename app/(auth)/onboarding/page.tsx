@@ -14,7 +14,7 @@ async function Page() {
         id: user?.id,
         objectId: userInfo?._id,
         username: userInfo ? userInfo?.username : user?.username,
-        name: userInfo ? userInfo?.namme : user?.firstName || '',
+        name: userInfo ? userInfo?.name : user?.firstName ?? '',
         bio: userInfo ? userInfo?.bio : '',
         image: userInfo ? userInfo?.image : user?.imageUrl,
     }
@@ -25,7 +25,7 @@ async function Page() {
                 Complete your profile now to use Threads
             </p>
             <section className='mt-9 bg-dark-2 p-10'>
-                <AccountProfile user={userData} btnTitle='continue' />
+                <AccountProfile user={userData} btnTitle='Continue' />
             </section>
         </main>
     )

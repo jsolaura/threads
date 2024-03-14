@@ -1,6 +1,12 @@
 'use client';
 
-import React, {ChangeEvent, useState} from 'react';
+import * as z from 'zod';
+import Image from "next/image";
+import { ChangeEvent, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -12,15 +18,12 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import {useForm} from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {UserValidation} from "@/lib/validations/user";
-import * as z from 'zod';
-import Image from "next/image";
+
 import { isBase64Image } from '@/lib/utils';
 import { useUploadThing } from '@/lib/uploadthing';
+
+import { UserValidation } from "@/lib/validations/user";
 import { updateUser } from '@/lib/actions/user.actions';
-import { usePathname, useRouter } from 'next/navigation';
 
 interface Props {
     user: {
@@ -31,22 +34,23 @@ interface Props {
         bio: string;
         image: string;
     };
-    btnTitle: string;
+    btnTitle?: string;
 }
 
 const AccountProfile = ({ user, btnTitle }: Props) => {
-    const [files, setFiles] = useState<File[]>([]);
-    const { startUpload } = useUploadThing('media');
     const router = useRouter();
     const pathname = usePathname();
+    const { startUpload } = useUploadThing('media');
+
+    const [files, setFiles] = useState<File[]>([]);
 
     const form = useForm<z.infer<typeof UserValidation>>({
         resolver: zodResolver(UserValidation),
         defaultValues: {
-            profile_photo: user?.image || '',
-            name: user?.name || '',
-            username: user?.username || '',
-            bio: user?.bio || '',
+            profile_photo: user?.image ? user.image : "",
+            name: user?.name ? user.name : "",
+            username: user?.username ? user.username : "",
+            bio: user?.bio ? user.bio : "",
         }
     });
 
@@ -198,7 +202,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                         </FormItem>
                     )}
                 />
-                <Button type="submit" className='bg-primary-500'>Submit</Button>
+                <Button type="submit" className='bg-primary-500'>{btnTitle ? btnTitle : 'Submit'}</Button>
             </form>
         </Form>
     );

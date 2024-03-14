@@ -1,8 +1,8 @@
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-// import Searchbar from "@/components/shared/Searchbar";
-// import Pagination from "@/components/shared/Pagination";
+import Searchbar from "@/components/shared/Searchbar";
+import Pagination from "@/components/shared/Pagination";
 import CommunityCard from "@/components/cards/CommunityCard";
 
 import { fetchUser } from "@/lib/actions/user.actions";
@@ -24,24 +24,21 @@ async function Page({
         pageNumber: searchParams?.page ? +searchParams.page : 1,
         pageSize: 25,
     });
-    console.log('result----!!!')
-    console.log(result)
+
     return (
         <>
         <h1 className='head-text'>Communities</h1>
 
-        {/* <div className='mt-5'>
+        <div className='mt-5'>
             <Searchbar routeType='communities' />
-        </div> */}
+        </div>
 
         <section className='mt-9 flex flex-wrap gap-4'>
             {result.communities.length === 0 ? (
             <p className='no-result'>No Result</p>
             ) : (
             <>
-            dsfs
                 {result.communities.map((community) => (
-                    // <h2 className='text-light-1'>{community.id}</h2>
                     <CommunityCard
                         key={`community-${community.id}`}
                         id={community.id}
@@ -55,12 +52,12 @@ async function Page({
             </>
             )}
         </section>
-{/* 
+
         <Pagination
             path='communities'
             pageNumber={searchParams?.page ? +searchParams.page : 1}
             isNext={result.isNext}
-        /> */}
+        />
         </>
     );
 }
